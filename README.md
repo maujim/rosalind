@@ -1,4 +1,4 @@
-# ROSLIND
+# ROSALIND
 
 My attemps at the various rosalind projects (http://rosalind.info/problems)
 
