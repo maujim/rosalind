@@ -67,6 +67,12 @@ def gc(raw_fasta: str) -> str:
     return best_code + "{:.6f}".format(best_gc_content)
 
 
+def hamm(s: str, t: str) -> int:
+    assert len(s) < 1001 and len(s) == len(t)
+
+    return sum(1 for sx, tx in zip(s, t) if sx != tx)
+
+
 class TestSolutions(unittest.TestCase):
     def test_dna(self):
         test_input = (
@@ -105,6 +111,12 @@ TGGGAACCTGCGGGCAGTAGGTGGAAT"""
 60.919540"""
         self.assertEqual(gc(test_input), test_output)
 
+    def test_hamm(self):
+        test_input = "GAGCCTACTAACGGGAT\nCATCGTAATGACGGCCT"
+        s, t = test_input.split("\n")
+        test_ans = 7
+        self.assertEqual(hamm(s, t), test_ans)
+
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
@@ -126,6 +138,9 @@ if __name__ == "__main__":
             k = int(m.group(2))
             print(n, k)
             output = target_fn(n, k)
+        elif rosalind_id == "hamm":
+            s, t = input.split("\n")[:2]
+            output = target_fn(s, t)
         else:
             output = target_fn(input)
         print(output)
