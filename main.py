@@ -43,6 +43,30 @@ def fib(n: int, k: int) -> int:
     return inner_fib(n)
 
 
+def decode_fasta(raw: str) -> list:
+    pattern = re.compile(r">(Rosalind_\d{4}\n)([ACTG\n]+)")
+    m = pattern.findall(raw)
+    return m
+
+
+def gc(raw_fasta: str) -> str:
+    data = decode_fasta(raw_fasta)
+    assert len(data) < 11
+
+    best_code = None
+    best_gc_content = 0
+
+    for code, dna in data:
+        stats = Counter(dna)
+        del stats["\n"]
+        gc_content = (100 * (stats["G"] + stats["C"])) / stats.total()
+        if gc_content > best_gc_content:
+            best_gc_content = gc_content
+            best_code = code
+
+    return best_code + "{:.6f}".format(best_gc_content)
+
+
 class TestSolutions(unittest.TestCase):
     def test_dna(self):
         test_input = (
@@ -66,6 +90,20 @@ class TestSolutions(unittest.TestCase):
         k = 3
         test_ans = 19
         self.assertEqual(fib(n, k), test_ans)
+
+    def test_gc(self):
+        test_input = """>Rosalind_6404
+CCTGCGGAAGATCGGCACTAGAATAGCCAGAACCGTTTCTCTGAGGCTTCCGGCCTTCCC
+TCCCACTAATAATTCTGAGG
+>Rosalind_5959
+CCATCGGTAGCGCATCCTTAGTCCAATTAAGTCCCTATCCAGGCGCTCCGCCGAAGGTCT
+ATATCCATTTGTCAGCAGACACGC
+>Rosalind_0808
+CCACCCTCGTGGTATGGCTAGGCATTCAGGAACCGGAGAACGCTTCAGACCAGCCCGGAC
+TGGGAACCTGCGGGCAGTAGGTGGAAT"""
+        test_output = """Rosalind_0808
+60.919540"""
+        self.assertEqual(gc(test_input), test_output)
 
 
 if __name__ == "__main__":
